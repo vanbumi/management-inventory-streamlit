@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from db_manager import add_item, get_all_items, decrease_item_stock, create_table
+from search import search_item
 
 # Setup halaman
 st.set_page_config(page_title="Aplikasi Manajemen Inventaris", layout="wide")
@@ -15,6 +16,22 @@ def load_data():
 
 # Halaman Utama
 st.title("Manajemen Inventaris Gudang")
+
+# Pencarian Barang
+st.subheader("Pencarian Barang")
+search_keyword = st.text_input("Cari berdasarkan Kode Barang atau Nama Barang")
+if search_keyword:
+    search_results = search_item(search_keyword)
+    if search_results:
+        df = pd.DataFrame(search_results, columns=["Kode Barang", "Nama Barang", "Stok", "Harga per Unit"])
+        st.dataframe(df)
+    else:
+        st.warning("Barang tidak ditemukan.")
+else:
+    # Tampilkan semua barang jika tidak ada pencarian
+    st.subheader("Inventaris Saat Ini")
+    df = load_data()
+    st.dataframe(df)
 
 # Tampilkan data inventaris
 st.subheader("Inventaris Saat Ini")
